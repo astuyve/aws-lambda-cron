@@ -1,0 +1,5 @@
+name: lambda-cron
+version: 0.0.1
+org: serverlessinc
+keywords: aws, serverless, cron
+src: ./src
