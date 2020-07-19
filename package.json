@@ -7,8 +7,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "AJ Stuyvenberg",
-  "license": "ISC",
-  "dependencies": {
-    "@serverless/aws-sdk": "^6.1.2"
-  }
+  "license": "ISC"
 }
