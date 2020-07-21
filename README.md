@@ -9,7 +9,6 @@ This Serverless Framework Component is a ready-to-go Lambda function that runs o
 - [x] **Fast Deployments** - Deploy to the cloud in seconds.
 - [x] **Realtime Logging** - Rapidly develop on the cloud w/ real-time logs and errors in the CLI.
 - [x] **Team Collaboration** - Collaborate with your teammates with shared state and outputs.
-- [x] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
 
 <br/>
 
