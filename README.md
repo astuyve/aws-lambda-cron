@@ -1,4 +1,4 @@
-# Serverless Lambda Cron Component
+# Serverless AWS Lambda Cron Component
 
 This Serverless Framework Component is a ready-to-go Lambda function that runs on whatever schedule you want!
 
@@ -25,11 +25,11 @@ npm install -g serverless
 
 ## Initialize
 
-The easiest way to start using the lambda-cron component is by initializing the `lambda-cron` template. Just run this command:
+The easiest way to start using the lambda-cron component is by initializing the `aws-lambda-cron` template. Just run this command:
 
 ```
-serverless init lambda-cron
-cd lambda-cron
+serverless init aws-lambda-cron
+cd aws-lambda-cron
 ```
 
 This will create an empty `.env` file. Open that `.env` file and add your AWS credentials
@@ -50,7 +50,7 @@ You should now have a directory that looks something like this:
 The `serverless.yml` file is where you define your component config. It looks something like this:
 
 ```yml
-component: lambda-cron
+component: aws-lambda-cron
 name: my-own-lambda
 
 inputs:
@@ -90,8 +90,8 @@ schedule: cron(0 12 * * ? *) // every day at 12:00pm UTC
 Full reference:
 
 ```
-component: lambda-cron           # (required) name of the component. In that case, it's express. You will want to pin this to a specific version in production via semantic versioning, like this: lambda-cron@0.0.2. Run 'serverless registry lambda-cron' to see available versions.
-name: lambda-cron                # (required) name of your express component instance.
+component: aws-lambda-cron       # (required) name of the component. In that case, it's express. You will want to pin this to a specific version in production via semantic versioning, like this: lambda-cron@0.0.2. Run 'serverless registry lambda-cron' to see available versions.
+name: my-lambda-cron             # (required) name of your express component instance.
 org: serverlessinc               # (optional) serverless dashboard org. default is the first org you created during sign up.
 app: myApp                       # (optional) serverless dashboard app. default is the same as the name property.
 stage: dev                       # (optional) serverless dashboard stage. default is dev.
