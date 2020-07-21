@@ -13,6 +13,11 @@ class LambdaCron extends Component {
       throw new Error(msg);
     }
 
+    if (!inputs.schedule) {
+      throw new Error(
+        "Input 'schedule' is required. Please see README: https://git.io/JJWW0"
+      );
+    }
     const region = inputs.region || "us-east-1";
 
     this.state.name = inputs.name;
@@ -51,6 +56,8 @@ class LambdaCron extends Component {
       roleArn,
       lambdaSrc: await fs.promises.readFile(inputs.src),
       memory: inputs.memory || 512,
+      timeout: inputs.timeout || 60,
+      env: inputs.env,
     };
 
     const { lambdaArn, lambdaSize, lambdaSha } = await extras.deployLambda(
