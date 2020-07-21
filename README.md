@@ -12,6 +12,7 @@ This Serverless Framework Component is a ready-to-go Lambda function that runs o
 - [x] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
 
 <br/>
+
 # Quick Start
 
 ## Install
