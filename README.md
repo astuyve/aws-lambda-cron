@@ -25,14 +25,14 @@ npm install -g serverless
 
 ## Initialize
 
-The easiest way to start using the graphql component is by initializing the `graphql-starter` template. Just run this command:
+The easiest way to start using the lambda-cron component is by initializing the `lambda-cron` template. Just run this command:
 
 ```
-serverless init graphql-starter
-cd graphql-starter
+serverless init lambda-cron
+cd lambda-cron
 ```
 
-This will also run `npm install` for you, and create an empty `.env` file. Open that `.env` file and add your AWS credentials
+This will create an empty `.env` file. Open that `.env` file and add your AWS credentials
 
 ```
 # .env
@@ -45,8 +45,6 @@ You should now have a directory that looks something like this:
 ```
 |- serverless.yml
 |- .env
-|- schema.graphql
-|- resolvers.js
 ```
 
 The `serverless.yml` file is where you define your component config. It looks something like this:
