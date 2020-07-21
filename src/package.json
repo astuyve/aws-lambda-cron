@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "@serverless/aws-sdk": "serverless/aws-sdk#master"
+    "@serverless/aws-sdk-extra": "serverless/aws-sdk#extra"
   }
 }

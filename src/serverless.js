@@ -1,8 +1,10 @@
 "use strict";
 
 const { Component } = require("@serverless/core");
-const aws = require(`@serverless/aws-sdk`);
+const aws = require("@serverless/aws-sdk-extra");
 const fs = require("fs");
+
+const { createOrUpdateMetaRole } = require("./utils");
 
 class LambdaCron extends Component {
   async deploy(inputs = {}) {
@@ -13,8 +15,10 @@ class LambdaCron extends Component {
 
     const region = inputs.region || "us-east-1";
 
+    this.state.name = inputs.name;
     this.state.region = region;
-    aws.config.update({
+
+    const extras = new aws.Extras({
       credentials: this.credentials.aws,
       region,
     });
@@ -39,7 +43,7 @@ class LambdaCron extends Component {
         },
       ],
     };
-    const { roleArn } = await aws.utils.deployRole(roleParams);
+    const { roleArn } = await extras.deployRole(roleParams);
     this.state.roleName = roleParams.roleName;
 
     const lambdaParams = {
@@ -49,7 +53,7 @@ class LambdaCron extends Component {
       memory: inputs.memory || 512,
     };
 
-    const { lambdaArn, lambdaSize, lambdaSha } = await aws.utils.deployLambda(
+    const { lambdaArn, lambdaSize, lambdaSha } = await extras.deployLambda(
       lambdaParams
     );
     this.state.lambdaName = lambdaParams.lambdaName;
@@ -60,11 +64,17 @@ class LambdaCron extends Component {
       Description: `Lambda-Cron schedule rule for ${inputs.name}`,
     };
 
-    const cwEvents = new aws.CloudWatchEvents();
+    const cwEvents = new aws.CloudWatchEvents({
+      credentials: this.credentials.aws,
+      region,
+    });
     const { RuleArn } = await cwEvents.putRule(putRuleParams).promise();
     this.state.cloudWatchRule = putRuleParams.Name;
 
-    const lambda = new aws.Lambda();
+    const lambda = new aws.Lambda({
+      credentials: this.credentials.aws,
+      region,
+    });
     const lambdaPermissions = {
       StatementId: `${inputs.name}-lambda-permission`,
       FunctionName: lambdaParams.lambdaName,
@@ -76,7 +86,9 @@ class LambdaCron extends Component {
     try {
       await lambda.addPermission(lambdaPermissions).promise();
     } catch (error) {
-      console.log("permission already added to lambda, continuing");
+      console.log(
+        "CloudWatch Events permission already added to lambda, continuing"
+      );
     }
 
     const targetParams = {
@@ -90,24 +102,80 @@ class LambdaCron extends Component {
     };
     const response = await cwEvents.putTargets(targetParams).promise();
     this.state.targetId = targetParams.Targets.Id;
+
+    await createOrUpdateMetaRole(this, inputs, extras, this.accountId);
   }
   async remove() {
     if (Object.keys(this.credentials.aws).length === 0) {
       const msg = `Credentials not found. Make sure you have a .env file in the cwd. - Docs: https://git.io/JvArp`;
       throw new Error(msg);
     }
+    const region = this.state.region || "us-east-1";
 
-    aws.config.update({
+    const extras = new aws.Extras({
       credentials: this.credentials.aws,
-      region: this.state.region || "us-east-1",
+      region,
     });
 
-    await aws.utils.removeRole({ roleName: this.state.roleName });
-    await aws.utils.removeLambda({ lambdaName: this.state.lambdaName });
-    const cwEvents = new aws.CloudWatchEvents();
+    console.log("removing execution role");
+    await extras.removeRole({ roleName: this.state.roleName });
+    console.log("removing meta role");
+    await extras.removeRole({ roleName: this.state.metaRoleName });
+    await extras.removeLambda({ lambdaName: this.state.lambdaName });
+    const cwEvents = new aws.CloudWatchEvents({
+      credentials: this.credentials.aws,
+      region,
+    });
     await cwEvents.deleteRule(this.state.cloudWatchRule);
     // Clear state, we did it team
     this.state = {};
+  }
+  /**
+   * Metrics
+   */
+  async metrics(inputs = {}) {
+    console.log("Fetching metrics...");
+
+    /**
+     * Create AWS STS Token via the meta role that is deployed with the Express Component
+     */
+
+    // Assume Role
+    const assumeParams = {};
+    assumeParams.RoleSessionName = `session${Date.now()}`;
+    assumeParams.RoleArn = this.state.metaRoleArn;
+    assumeParams.DurationSeconds = 900;
+
+    const region = this.state.region;
+    const sts = new aws.STS({ region });
+    const resAssume = await sts.assumeRole(assumeParams).promise();
+
+    const roleCreds = {};
+    roleCreds.accessKeyId = resAssume.Credentials.AccessKeyId;
+    roleCreds.secretAccessKey = resAssume.Credentials.SecretAccessKey;
+    roleCreds.sessionToken = resAssume.Credentials.SessionToken;
+
+    const resources = [
+      {
+        type: "aws_lambda",
+        functionName: this.state.lambdaName,
+      },
+    ];
+
+    /**
+     * Instantiate a new Extras instance w/ the temporary credentials
+     */
+
+    const extras = new aws.Extras({
+      credentials: roleCreds,
+      region,
+    });
+
+    return await extras.getMetrics({
+      rangeStart: inputs.rangeStart,
+      rangeEnd: inputs.rangeEnd,
+      resources,
+    });
   }
 }
 
