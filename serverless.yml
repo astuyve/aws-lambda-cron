@@ -1,5 +1,6 @@
 name: lambda-cron
-version: 0.0.1
+version: 0.0.2
 org: serverlessinc
 keywords: aws, serverless, cron
+author: AJ Stuyvenberg
 src: ./src
