@@ -1,5 +1,17 @@
-# lambda-cron
+# Serverless Lambda Cron Component
 
+This Serverless Framework Component is a ready-to-go Lambda function that runs on whatever schedule you want!
+
+<br/>
+
+- [x] **Never Pay For Idle** - No invocations, no cost. Averages $0.0000002-$0.0000009 per request.
+- [x] **Zero Configuration** - All we need is your code, then just deploy (advanced config options are available).
+- [x] **Fast Deployments** - Deploy to the cloud in seconds.
+- [x] **Realtime Logging** - Rapidly develop on the cloud w/ real-time logs and errors in the CLI.
+- [x] **Team Collaboration** - Collaborate with your teammates with shared state and outputs.
+- [x] **Custom Domain + SSL** - Auto-configure a custom domain w/ a free AWS ACM SSL certificate.
+
+<br/>
 # Quick Start
 
 ## Install
