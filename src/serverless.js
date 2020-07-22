@@ -19,6 +19,7 @@ class LambdaCron extends Component {
       );
     }
     const region = inputs.region || "us-east-1";
+    inputs.name = inputs.name || this.name;
 
     this.state.name = inputs.name;
     this.state.region = region;
