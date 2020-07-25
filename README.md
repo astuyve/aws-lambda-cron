@@ -27,8 +27,8 @@ npm install -g serverless
 The easiest way to start using the lambda-cron component is by initializing the `aws-lambda-cron` template. Just run this command:
 
 ```
-serverless init aws-lambda-cron
-cd aws-lambda-cron
+serverless init aws-lambda-cron-template
+cd aws-lambda-cron-template
 ```
 
 This will create an empty `.env` file. Open that `.env` file and add your AWS credentials
@@ -44,23 +44,27 @@ You should now have a directory that looks something like this:
 ```
 |- serverless.yml
 |- .env
+|- src/handler.js
 ```
 
 The `serverless.yml` file is where you define your component config. It looks something like this:
 
 ```yml
-component: aws-lambda-cron
-name: my-own-lambda
-
+component: aws-lambda-cron@dev
+org: your-org-here
+name: lambda-cron
 inputs:
-  src: ./
+  src: ./src/
+  schedule: rate(1 minute)
 ```
+
+You can add your own code in `src` and run it at your own schedule!
 
 For more configuration options for the `serverless.yml` file, [check out the Configuration section](#configuration-reference) below.
 
 # Your code
 
-All you need to do is add an `index.js` file that exposes a method called `handler`, and the rest is up to you!
+All you need to do is add javascript file that exposes a method called `handler`, and the rest is up to you!
 
 `src/index.js`
 
