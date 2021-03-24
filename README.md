@@ -1,3 +1,5 @@
+Note: this repository has been moved: https://github.com/serverless-components/aws-lambda-cron
+
 # Serverless AWS Lambda Cron Component
 
 This Serverless Framework Component is a ready-to-go Lambda function that runs on whatever schedule you want!
